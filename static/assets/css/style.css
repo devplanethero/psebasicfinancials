@@ -1371,6 +1371,7 @@ Search Result box
   box-shadow: 0 8px 8px 0 rgba(0, 0, 0, .2);
   margin: 0 auto;
   overflow-x: hidden ;
+  z-index: 999;
 }
 
 .item {
@@ -1559,7 +1560,7 @@ Side bar and NavBar Fix
 }
 
 @media (max-width:992px) {
-  .home-page-content .row{
+  .home-page-content .body--content{
     padding-top: 120px;
     padding-bottom: 30px;
     justify-content: center;
