@@ -1,0 +1,37 @@
+  {% load static %}
+  
+  <!-- ======= Sidebar ======= -->
+  {% if request.path == '/' %}
+  <aside id="sidebar" class="sidebar-home">
+  {% else %}
+  <aside id="sidebar" class="sidebar">
+  {% endif %}
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'base:home' %}" id="home-side-nav">
+          <i class="bi bi-house"></i>
+          <span>Home</span>
+        </a>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'base:company-list' %}" id="company-list-side-nav">
+          <i class="bi bi-building"></i>
+          <span>Company List</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-heading">Pages</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'base:about' %}">
+          <i class="bi bi-question-circle"></i>
+          <span>About</span>
+        </a>
+      </li><!-- End About Page Nav -->
+
+
+    </ul>
+
+  </aside><!-- End Sidebar-->

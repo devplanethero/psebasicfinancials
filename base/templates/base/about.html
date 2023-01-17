@@ -1,0 +1,72 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}
+About - 
+{% endblock %}
+
+{% block content %}
+
+<div class="pagetitle mb-3">
+    <h1>About</h1>
+</div>
+
+<section class="section about">
+    <div class="card">
+        <div class="card-body pt-3">
+            <div class="about__p text-muted">
+                <p >Welcome to PSE Basic Financials, a website built using Python Django web framework.</p>
+                <p >As a self-taught developer, this project was an opportunity for me to put my skills to the test and create a valuable resource for others. I wanted to create a platform that makes it easy for people to access and understand financial data of listed companies in the Philippines.</p>
+                <p >I believe that having access to comprehensive financial data is important and that's why I created this website. My goal is to provide a user-friendly platform that makes it easy to browse and search financial data and help investors make informed decisions.</p>
+                <p >I am constantly learning and looking for ways to improve the site, so feel free to reach out to me with any feedback or suggestions.</p>
+            </div>
+            
+            <div class="card-title">Feedback</div>
+            <div class="d-flex container__form">
+                <form action="." method="post" autocomplete="off" onsubmit="return validateRecaptcha()">
+                    {% csrf_token %}
+    
+                    <div class="form__group">
+                        <label for="feed_name">Name</label>
+                    {{feedback_form.name}}
+                    </div>
+                    <div class="form__group">
+                        <label for="feed_email">Email</label>
+                    {{feedback_form.email}}
+                    </div>
+                    <div class="form__group">
+                        <label for="feed_message">Message/Feedback</label>
+                    {{feedback_form.message}}
+                    </div>
+                    <div class="mb-2">
+                        {{feedback_form.captcha}}
+                    </div>
+                    <div class="form__action d-flex justify-content-center">
+                        <button class="btn btn-light" type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+
+    </div>
+
+</section>
+
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    function validateRecaptcha() {
+        var response = grecaptcha.getResponse();
+        if (response.length === 0) {
+            alert("Not verified! Please check the checkbox.");
+            return false;
+        } else {
+            alert('Thank you for your feedback! We appreciate it and will use it to improve this site.');
+            return true;
+        }
+    }
+</script>
+{% endblock %}

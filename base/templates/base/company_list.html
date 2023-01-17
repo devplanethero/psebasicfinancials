@@ -1,0 +1,49 @@
+{% extends 'index.html' %}
+
+{% block title %}
+List of Companies - 
+{% endblock %}
+
+{% block content %}
+
+<div class="pagetitle mb-3">
+    <h1>List of Companies</h1>
+</div>
+
+<section class="section">
+    <div class="container-fuid bg-white shadow-sm p-2 rounded-2">
+        <table id="company-list" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in companies %}
+                <tr>
+                    <td><a href="{% url 'base:company' company.ticker %}">{{company.ticker}}</a></td>
+                    <td><a class="text-muted" href="{% url 'base:company' company.ticker %}">{{company.name}}</a></td>
+                    <td class="text-muted">{{company.type}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    document.querySelector('#company-list-side-nav').classList.remove('collapsed')
+</script>
+{% endblock %}

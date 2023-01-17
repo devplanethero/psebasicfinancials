@@ -1,0 +1,192 @@
+{% extends 'index.html' %}
+{% load humanize %}
+
+{% block title %}
+{{company.name}} ({{company.ticker}}) - 
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container-fluid bg-white rounded-2 shadow-sm py-3 mb-3 overflow-hidden" id="container-top">
+        <div class="row justify-content-between align-items-end">
+            <div class="col-md-2">
+                <div class="pagetitle text-nowrap">
+                    <h1>{{ company.name }}  <span class="fw-normal">({{ company.ticker }})</span></h1>
+                    <nav>
+                    <ol class="breadcrumb pt-2">
+                        {% if period_status == 'year' %}
+                        <li class="breadcrumb-item active"><a href="{% url 'base:company' company.ticker %}?period=year">Yearly</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'base:company' company.ticker %}?period=quarter">Quarterly</a></li>
+                        {% else %}
+                        <li class="breadcrumb-item"><a href="{% url 'base:company' company.ticker %}?period=year">Yearly</a></li>
+                        <li class="breadcrumb-item active"><a href="{% url 'base:company' company.ticker %}?period=quarter">Quarterly</a></li>            
+                        {% endif %}
+                    </ol>
+                    </nav>
+                </div><!-- End Page Title -->
+            </div>
+    
+            <div class="col-sm-2 d-flex justify-content-end me-3">
+                <a href="{% url 'base:company-csv' company.ticker %}" class="btn btn-secondary btn-sm">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="bi bi-cloud-download"></i><span class="button--text">CSV</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section collapse" id="bar-chart">
+    <div class="card-body px-0">
+        <div class="container-fuid shadow-sm p-2 rounded-2 bg-white">
+            <div class="container d-flex justify-content-center">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="closeChart()">Close Chart</button>
+            </div>
+            <h5 class="card-title pt-0" id="chart-title"> </h5>
+
+            <!-- Line Chart -->
+            <canvas id="barChart" style="max-height: 350px;"></canvas>
+            <!-- End Line CHart -->
+
+      </div>
+    </div>
+</section>
+
+
+
+<section class="section financial-table-section">
+    <div class="container-fuid bg-white shadow-sm rounded-2 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+         
+                <tr class="table-secondary">
+                    {% for header in table_headers %}
+                    <th scope="col" class="text-center text-nowrap table-header">{{header}}</th>
+                    {% endfor %}
+                </tr>
+                
+                </thead>
+                <tbody class="table-financials">
+    
+                {% for key,clean_header in classification.items %}
+                <tr>
+                    <th scope="row" class="text-nowrap ps-2"><span id="table_first_col">{{ clean_header }}</span></th>
+                    
+                    {% for val in data|get_item:key %}
+                    <td class="col-md-1 text-end px-2">{{val |floatformat:0| intcomma}}</td>
+                    {% endfor %}
+        
+                </tr>
+                {% endfor %}
+    
+            </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    document.querySelector('#company-list-side-nav').classList.remove('collapsed')
+</script>
+<script type="text/javascript">
+    var tbody = document.querySelector('tbody')
+    var thead = document.querySelector('thead')
+    var table_rows = tbody.querySelectorAll('tr')
+    var table_headers = thead.querySelectorAll('th')
+    var active_table_values = []
+    var active_table_headers = []
+    var bar_chart_container = document.querySelector('#bar-chart')
+
+    function create_chart(item){
+        var table_row_values = item.querySelectorAll('td')
+        var chart_values = Array.from(table_row_values).map(item => parseFloat(item.textContent.replace(/,/g, ''))) 
+        var chart_title = item.querySelector('th').textContent
+        var chart_headers = Array.from(table_headers).map(item => item.textContent).filter(item => item != '')
+        
+        document.getElementById('chart-title').textContent = chart_title
+        active_table_values = chart_values
+        active_table_headers = chart_headers
+        // new_div = `<div>${chart_values}</div>`
+        // var container = document.getElementById('container-top')
+        // container.innerHTML += new_div
+
+        chartStatus = Chart.getChart("barChart")
+        if (chartStatus != undefined) { // delete previous chart
+            chartStatus.destroy()
+            document.querySelector("#selector-decorator").remove()
+        }
+
+        var financial_chart = new Chart(document.querySelector('#barChart'), {
+            type: 'bar',
+            data: {
+                labels: active_table_headers,
+                datasets: [{
+                label: chart_title,
+                data: active_table_values,
+                backgroundColor: [
+                    'rgba(65, 84, 241, 0.2)',
+                ],
+                borderColor: [
+                    'rgb(65, 84, 241)',
+                ],
+                borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        display: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+                }
+            }
+            });
+            
+        item.querySelector('th').innerHTML = `<div class="position-absolute" style="
+                                                    top: 0;
+                                                    left: 0;
+                                                    height: 100%;
+                                                    width: 4px;
+                                                    background-color: rgb(65, 84, 241);"
+                                                id="selector-decorator"></div>` + item.querySelector('th').innerHTML
+    }
+
+        
+    // highlight table when clicked
+    table_rows.forEach(item => {
+        item.addEventListener('click', () => {
+            
+            // table_rows.forEach(a=> {
+            //     a.classList.remove("table-active")
+            // })
+            var table_active_status = document.querySelector(".table-active") !== null
+            if (table_active_status) {
+                document.querySelector(".table-active").classList.remove("table-active")
+            }
+        
+            item.classList.add("table-active")
+            bar_chart_container.classList.remove("collapse")
+            
+            create_chart(item)
+
+        })
+    })
+
+    function closeChart(){
+        bar_chart_container.classList.add("collapse")
+    }
+
+</script>
+{% endblock %}
