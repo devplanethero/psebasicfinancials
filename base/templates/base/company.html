@@ -55,7 +55,19 @@
     </div>
 </section>
 
-
+<!-- Table Controls -->
+<section class="section parameters-section">
+    <div class="container-fluid bg-white rounded-2 shadow-sm py-3 mb-3 overflow-hidden">
+       <div class="d-flex justify-content-center align-items-center">
+            <small class="me-2 control__label">Units:</small>
+            <div class="d-flex justify-content-between">
+                <button class="btn w-50 btn-rounding selected__unit" id="roundToK">K</button>
+                <button class="btn w-50 btn-rounding" id="roundToM">M</button>
+                <button class="btn w-50 btn-rounding" id="roundToB">B</button>
+            </div>
+       </div>
+    </div>
+</section>
 
 <section class="section financial-table-section">
     <div class="container-fuid bg-white shadow-sm rounded-2 overflow-hidden">
@@ -77,7 +89,7 @@
                     <th scope="row" class="text-nowrap ps-2"><span id="table_first_col">{{ clean_header }}</span></th>
                     
                     {% for val in data|get_item:key %}
-                    <td class="col-md-1 text-end px-2">{{val |floatformat:0| intcomma}}</td>
+                    <td class="col-md-1 text-end px-2 table-values">{{val |floatformat:0| intcomma}}</td>
                     {% endfor %}
         
                 </tr>
@@ -92,6 +104,64 @@
 
 <script>
     document.querySelector('#company-list-side-nav').classList.remove('collapsed')
+    
+
+    /*-------------------------------------------------
+    Table Rounding
+    ----------------------------------------------------*/
+    const valuesInK = []
+
+    document.querySelectorAll('.table-values').forEach(item => {
+        let tableValueInt = parseFloat(item.textContent.replace(/,/g, ''))
+
+        let valueinK = valuesInK.push(item.textContent)
+    })
+
+    const roundKBtn = document.querySelector('#roundToK')
+    roundKBtn.addEventListener('click', (e) => {
+        document.querySelector('.selected__unit').classList.remove('selected__unit')
+        roundKBtn.classList.add('selected__unit')
+        document.querySelectorAll('.table-values').forEach((item, index) => {
+            const newVal = valuesInK[index]
+            item.textContent = newVal
+        })
+        let table_active_status = document.querySelector(".table-active") !== null
+            if (table_active_status) {
+                create_chart(document.querySelector(".table-active"))
+            }
+    })
+
+    const roundMBtn = document.querySelector('#roundToM')
+    roundMBtn.addEventListener('click', (e) => {
+        document.querySelector('.selected__unit').classList.remove('selected__unit')
+        roundMBtn.classList.add('selected__unit')
+        document.querySelectorAll('.table-values').forEach((item, index) => {
+            let valueinKFloat = parseFloat(valuesInK[index].replace(/,/g, ''))
+            let valueInM = (Math.round(valueinKFloat/1000)*1000)/1000
+            valueInM = valueInM.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            item.textContent = valueInM
+        })
+        let table_active_status = document.querySelector(".table-active") !== null
+            if (table_active_status) {
+                create_chart(document.querySelector(".table-active"))
+            }
+    })
+    const roundBBtn = document.querySelector('#roundToB')
+    roundBBtn.addEventListener('click', (e) => {
+        document.querySelector('.selected__unit').classList.remove('selected__unit')
+        roundBBtn.classList.add('selected__unit')
+        document.querySelectorAll('.table-values').forEach((item, index) => {
+            let valueinKFloat = parseFloat(valuesInK[index].replace(/,/g, ''))
+            let valueInB = (Math.round(valueinKFloat/1000000)*1000000)/1000000
+            valueInB = valueInB.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            item.textContent = valueInB
+        })
+        let table_active_status = document.querySelector(".table-active") !== null
+            if (table_active_status) {
+                create_chart(document.querySelector(".table-active"))
+            }
+    })
+
 </script>
 <script type="text/javascript">
     var tbody = document.querySelector('tbody')

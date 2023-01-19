@@ -1639,3 +1639,41 @@ Side bar and NavBar Fix
 .container__form form{
   width: 100%;
 }
+
+/*------------------------------------------------------
+ #Button Controls 
+ -------------------------------------------------------*/
+
+.btn-rounding {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #012970;
+  border: 1px solid #012970;
+  padding: 4.75px 1rem;
+}
+
+.btn-rounding:hover {
+  background-color: rgba(65, 83, 241, 0.3);
+}
+
+#roundToK {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#roundToM {
+  border-radius: 0;
+  border-right: 0;
+  border-left: 0;
+}
+
+#roundToB {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.btn-rounding.selected__unit {
+  background-color: rgba(65, 83, 241, 0.795);
+  font-size: 0.875rem;
+  color: white;
+}
