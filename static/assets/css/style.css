@@ -1641,7 +1641,7 @@ Side bar and NavBar Fix
 }
 
 /*------------------------------------------------------
- #Button Controls 
+ #Button Controls Rounding
  -------------------------------------------------------*/
 
 .btn-rounding {
@@ -1677,3 +1677,137 @@ Side bar and NavBar Fix
   font-size: 0.875rem;
   color: white;
 }
+
+/*-------------------------------
+ # Slider Range 
+----------------------------*/
+.container__slider {
+  width: 100%;
+  min-width: 300px;
+  padding: 30px 5px 0 5px;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+@media (max-width: 588px) {
+  .container__slider{
+    margin-bottom: 1rem;
+  }
+}
+
+/* background */
+.slider{
+  height: 5px;
+  border-radius: 5px;
+  background: #ddd;
+  position: relative
+}
+
+/* selected */
+.slider .progress{
+  height: 5px;
+  left: 0%;
+  right: 0%;
+  position: absolute;
+  border-radius: 5px;
+  background: rgb(65, 83, 241);
+}
+
+.range-input{
+  position: relative;
+}
+.range-input input{
+  position: absolute;
+  top: -5px;
+  height: 5px;
+  width: 100%;
+  background: transparent;
+  pointer-events: none;
+  appearance: none;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* MS EDGE */
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  background: rgb(65, 83, 241);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+input[type="range"]::-moz-range-thumb{
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  pointer-events: auto;
+  -webkit-appearance: none;
+  background: rgb(65, 83, 241);
+}
+
+input[type="range"]::-webkit-slider-runnable-track{
+  -webkit-appearance: none;
+  height: 17px;
+}
+
+input[type="range"]::-moz-range-track{
+  -moz-appearance: none;
+  height: 17px;
+}
+
+input[type="range"]::-ms-track{
+  appearance: none;
+  height: 17px;
+}
+
+input[type="range"]::-moz-range-thumb{
+  height: 17px;
+  width: 17px;
+  -webkit-appearance: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: rgb(65, 83, 241);
+  pointer-events: auto;
+}
+
+input[type="range"]::-ms-thumb{
+  appearance: none;
+  height: 17px;
+  width: 17px;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: rgb(65, 83, 241);
+  pointer-events: auto;
+}
+
+.slider__tooltip {
+  position: absolute;
+  top: -40px;
+  height: 28px;
+  width: 45px;
+  background: rgba(65, 83, 241, 0.795);
+  border: none;
+  color: white;
+  border-radius: 0.375rem;
+  display: grid;
+  place-content: center;
+  transition: transform 0.20s;
+}
+
+.slider__tooltip.min-value{
+  left: -12px
+}
+
+.slider__tooltip.max-value{
+  right: -12px
+}
+
+.slider__tooltip .label__range{
+  font-size: 0.6rem;
+  text-align: center;
+}
+

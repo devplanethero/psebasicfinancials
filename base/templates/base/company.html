@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% load humanize %}
+{% load static %}
 
 {% block title %}
 {{company.name}} ({{company.ticker}}) - 
@@ -58,14 +59,36 @@
 <!-- Table Controls -->
 <section class="section parameters-section">
     <div class="container-fluid bg-white rounded-2 shadow-sm py-3 mb-3 overflow-hidden">
-       <div class="d-flex justify-content-center align-items-center">
-            <small class="me-2 control__label">Units:</small>
-            <div class="d-flex justify-content-between">
-                <button class="btn w-50 btn-rounding selected__unit" id="roundToK">K</button>
-                <button class="btn w-50 btn-rounding" id="roundToM">M</button>
-                <button class="btn w-50 btn-rounding" id="roundToB">B</button>
+        <div class="row">
+            <div class="col slider__column d-flex align-items-center">
+                <div class="container__slider">
+                    <div class="slider">
+                        <div class="progress"></div>
+                        <div class="slider__tooltip min-value">
+                            <div class="label__range">50</div>
+                        </div>
+                        <div class="slider__tooltip max-value">
+                            <div class="label__range">50</div>
+                        </div>
+                    </div>
+                    <div class="range-input">
+                        <input type="range" class="range-min" min="0" max="10" value="0">
+                        <input type="range" class="range-max" min="0" max="10" value="10">
+                    </div>
+                </div>
             </div>
-       </div>
+            <div class="col units__column">
+                <div class="d-flex justify-content-center align-items-center">
+                    <small class="me-2 control__label">Units:</small>
+                    <div class="d-flex justify-content-between">
+                        <button class="btn w-50 btn-rounding selected__unit" id="roundToK">K</button>
+                        <button class="btn w-50 btn-rounding" id="roundToM">M</button>
+                        <button class="btn w-50 btn-rounding" id="roundToB">B</button>
+                    </div>
+               </div>
+            </div>
+        </div>
+       
     </div>
 </section>
 
@@ -102,161 +125,5 @@
 </section>
 
 
-<script>
-    document.querySelector('#company-list-side-nav').classList.remove('collapsed')
-    
-
-    /*-------------------------------------------------
-    Table Rounding
-    ----------------------------------------------------*/
-    const valuesInK = []
-
-    document.querySelectorAll('.table-values').forEach(item => {
-        let tableValueInt = parseFloat(item.textContent.replace(/,/g, ''))
-
-        let valueinK = valuesInK.push(item.textContent)
-    })
-
-    const roundKBtn = document.querySelector('#roundToK')
-    roundKBtn.addEventListener('click', (e) => {
-        document.querySelector('.selected__unit').classList.remove('selected__unit')
-        roundKBtn.classList.add('selected__unit')
-        document.querySelectorAll('.table-values').forEach((item, index) => {
-            const newVal = valuesInK[index]
-            item.textContent = newVal
-        })
-        let table_active_status = document.querySelector(".table-active") !== null
-            if (table_active_status) {
-                create_chart(document.querySelector(".table-active"))
-            }
-    })
-
-    const roundMBtn = document.querySelector('#roundToM')
-    roundMBtn.addEventListener('click', (e) => {
-        document.querySelector('.selected__unit').classList.remove('selected__unit')
-        roundMBtn.classList.add('selected__unit')
-        document.querySelectorAll('.table-values').forEach((item, index) => {
-            let valueinKFloat = parseFloat(valuesInK[index].replace(/,/g, ''))
-            let valueInM = (Math.round(valueinKFloat/1000)*1000)/1000
-            valueInM = valueInM.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            item.textContent = valueInM
-        })
-        let table_active_status = document.querySelector(".table-active") !== null
-            if (table_active_status) {
-                create_chart(document.querySelector(".table-active"))
-            }
-    })
-    const roundBBtn = document.querySelector('#roundToB')
-    roundBBtn.addEventListener('click', (e) => {
-        document.querySelector('.selected__unit').classList.remove('selected__unit')
-        roundBBtn.classList.add('selected__unit')
-        document.querySelectorAll('.table-values').forEach((item, index) => {
-            let valueinKFloat = parseFloat(valuesInK[index].replace(/,/g, ''))
-            let valueInB = (Math.round(valueinKFloat/1000000)*1000000)/1000000
-            valueInB = valueInB.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            item.textContent = valueInB
-        })
-        let table_active_status = document.querySelector(".table-active") !== null
-            if (table_active_status) {
-                create_chart(document.querySelector(".table-active"))
-            }
-    })
-
-</script>
-<script type="text/javascript">
-    var tbody = document.querySelector('tbody')
-    var thead = document.querySelector('thead')
-    var table_rows = tbody.querySelectorAll('tr')
-    var table_headers = thead.querySelectorAll('th')
-    var active_table_values = []
-    var active_table_headers = []
-    var bar_chart_container = document.querySelector('#bar-chart')
-
-    function create_chart(item){
-        var table_row_values = item.querySelectorAll('td')
-        var chart_values = Array.from(table_row_values).map(item => parseFloat(item.textContent.replace(/,/g, ''))) 
-        var chart_title = item.querySelector('th').textContent
-        var chart_headers = Array.from(table_headers).map(item => item.textContent).filter(item => item != '')
-        
-        document.getElementById('chart-title').textContent = chart_title
-        active_table_values = chart_values
-        active_table_headers = chart_headers
-        // new_div = `<div>${chart_values}</div>`
-        // var container = document.getElementById('container-top')
-        // container.innerHTML += new_div
-
-        chartStatus = Chart.getChart("barChart")
-        if (chartStatus != undefined) { // delete previous chart
-            chartStatus.destroy()
-            document.querySelector("#selector-decorator").remove()
-        }
-
-        var financial_chart = new Chart(document.querySelector('#barChart'), {
-            type: 'bar',
-            data: {
-                labels: active_table_headers,
-                datasets: [{
-                label: chart_title,
-                data: active_table_values,
-                backgroundColor: [
-                    'rgba(65, 84, 241, 0.2)',
-                ],
-                borderColor: [
-                    'rgb(65, 84, 241)',
-                ],
-                borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        display: false
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-                }
-            }
-            });
-            
-        item.querySelector('th').innerHTML = `<div class="position-absolute" style="
-                                                    top: 0;
-                                                    left: 0;
-                                                    height: 100%;
-                                                    width: 4px;
-                                                    background-color: rgb(65, 84, 241);"
-                                                id="selector-decorator"></div>` + item.querySelector('th').innerHTML
-    }
-
-        
-    // highlight table when clicked
-    table_rows.forEach(item => {
-        item.addEventListener('click', () => {
-            
-            // table_rows.forEach(a=> {
-            //     a.classList.remove("table-active")
-            // })
-            var table_active_status = document.querySelector(".table-active") !== null
-            if (table_active_status) {
-                document.querySelector(".table-active").classList.remove("table-active")
-            }
-        
-            item.classList.add("table-active")
-            bar_chart_container.classList.remove("collapse")
-            
-            create_chart(item)
-
-        })
-    })
-
-    function closeChart(){
-        bar_chart_container.classList.add("collapse")
-    }
-
-</script>
+<script src="{% static 'assets/js/company_scripts.js'%}"></script>
 {% endblock %}

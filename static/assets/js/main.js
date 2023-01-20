@@ -320,22 +320,23 @@
 })();
 
 // get current market price from phisix
-async function currentPrice (ticker){
-  var url = `http://phisix-api4.appspot.com/stocks/${ticker}.json`
-  var response = await fetch(url)
-  var data = await response.json()
-  var stock = data.stock[0]
-  var context = {
-      'price': stock.price.amount,
-      'percent_change': stock.percent_change,
-      'volume': stock.volume,
-      'updated': data.as_of
-  }
-  return context
-}
+// async function currentPrice (ticker){
+//   var url = `http://phisix-api4.appspot.com/stocks/${ticker}.json`
+//   var response = await fetch(url)
+//   var data = await response.json()
+//   var stock = data.stock[0]
+//   var context = {
+//       'price': stock.price.amount,
+//       'percent_change': stock.percent_change,
+//       'volume': stock.volume,
+//       'updated': data.as_of
+//   }
+//   return context
+// }
 
-// Search-Bar Auto-Complete
-
+/*-------------------------------------------------------------------
+ # Search-Bar Auto-Complete
+---------------------------------------------------------------------*/
 
 const base_url = window.location.origin
 const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
