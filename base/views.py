@@ -3,13 +3,15 @@ from rest_framework.response import Response
 from .models import Financials, Company, Industry, Feedback
 from .forms import FeedbackForm
 from django.db.models import Q # dynamic lookup
-from .serializer import FinancialsSerializer, CompanySerializer
+from .serializer import FinancialsSerializer, CompanySerializer, SelectedFinancialsSerializer, IndustrySerializer
 from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import FinancialsFilter
 from django.template.defaulttags import register
 from datetime import datetime
 from django.http import HttpResponse
 import csv
-from django.contrib import messages
 # Create your views here.
 
 def homePage(request):
@@ -180,15 +182,6 @@ def company_csv(request,ticker):
 def handle_not_found(request, exception):
     return render(request, 'base/error404.html')
 
-# API's
-@api_view(['GET'])
-def getCompanies(request, q):
-    companies = Company.objects.filter(Q(name__icontains=q) |
-                                        Q(ticker__icontains=q))
-    serializer = CompanySerializer(companies, many=True)
-    return Response(serializer.data)
-
-
 def aboutPage (request):
     feedback_form = FeedbackForm()
     context = {
@@ -207,3 +200,40 @@ def aboutPage (request):
             return redirect('base:about')
 
     return render(request, 'base/about.html', context)
+
+def leaderboardsPage(request):
+    return render(request, 'base/leaderboards.html')
+
+
+    # API's
+@api_view(['GET'])
+def getCompanies(request, q):
+    companies = Company.objects.filter(Q(ticker__icontains=q) |
+                                        Q(name__icontains=q))
+    serializer = CompanySerializer(companies, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getIndustries(request):
+    industries = Industry.objects.all()
+    serializer = IndustrySerializer(industries, many=True)
+    return Response(serializer.data)
+
+# @api_view(['GET'])
+# def getIndustries(request, q):
+#     f_date = '2022-01-01'
+#     from_date = datetime.strptime(f_date, "%Y-%m-%d").date()
+#     to_date = datetime.now()
+#     financials = Financials.objects.filter(reporting_period__range=(from_date, to_date)).filter(ticker__type__type__iexact=q)
+#     serializer = SelectedFinancialsSerializer(financials, many=True)
+#     return Response(serializer.data)
+
+class FinancialListView(ListAPIView):
+    f_date = '2021-01-01'
+    from_date = datetime.strptime(f_date, "%Y-%m-%d").date()
+    to_date = datetime.now()
+
+    queryset = Financials.objects.filter(reporting_period__range=(from_date, to_date)).filter(period__iexact='quarter')
+    serializer_class = SelectedFinancialsSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = FinancialsFilter

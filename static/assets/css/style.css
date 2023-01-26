@@ -1679,6 +1679,41 @@ Side bar and NavBar Fix
 }
 
 /*-------------------------------
+ # Button Controls Quarter
+----------------------------*/
+
+.quarter__selection > button:not(:first-child):not(:last-child){
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+.quarter__selection > button:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.quarter__selection > button:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.quarter__selection #period_q2 {
+  border-right: 1px solid #012970
+}
+
+
+/*-------------------------------
+ # Selections 
+----------------------------*/
+#year__selection {
+  max-width: 100px;
+}
+
+#industry__selection {
+  max-width: 300px;
+}
+/*-------------------------------
  # Slider Range 
 ----------------------------*/
 .container__slider {

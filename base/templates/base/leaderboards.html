@@ -1,0 +1,256 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}
+Leaderboards - 
+{% endblock %}
+
+{% block content %}
+
+<div class="pagetitle mb-3">
+    <h1>Leaderboards</h1>
+</div>
+
+<section class="section leaderboards">
+    <!-- Controls -->
+    <div class="card">
+        <div class="card-body pt-3 pb-0 d-flex justify-content-center">
+            <div class="row d-flex">
+                <!-- year selection -->
+                <div class="col">
+                    <div class="d-flex justify-content-center align-items-center pb-3">
+                        <small class="me-2 control__label">Year:</small>
+                        <select name="year_selection" id="year__selection" class="form-select">
+                            <option selected value="2022">2022</option>
+                            <option value="2021">2021</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- quarter buttons -->
+                <div class="col units__column d-flex align-items-center">
+                    <div class="d-flex justify-content-center align-items-center pb-3">
+                        <small class="me-2 control__label">Quarter:</small>
+                        <div class="d-flex justify-content-between quarter__selection">
+                            <button class="btn w-50 btn-rounding" id="period_q1" value="Q1">Q1</button>
+                            <button class="btn w-50 btn-rounding" id="period_q2" value="Q2">Q2</button>
+                            <button class="btn w-50 btn-rounding selected__unit" id="period_q3" value="Q3">Q3</button>
+                            <button class="btn w-50 btn-rounding disabled" id="period_q4" value="Q4">Q4</button>
+                        </div>
+                   </div>
+                </div>
+
+                <!-- industry selection -->
+                <div class="col">
+                    <div class="d-flex justify-content-center align-items-center pb-3">
+                        <small class="me-2 control__label">Industry:</small>
+                        <select name="industry_selection" id="industry__selection" class="form-select">
+                            <option selected value="Services">Services</option>
+                            <option value="Financials">Financials</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphs/Charts -->
+    <h2 class="mb-2 industry__title">Services</h2>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">Top 10 - Total Assets</div>
+                    <canvas id="barChart_totalAssets" style="max-height: 350px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">Top 10 - Net Income</div>
+                    <canvas id="barChart_netIncome" style="max-height: 350px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+
+</section>
+
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    document.querySelector('#leaderboards-side-nav').classList.remove('collapsed')
+</script>
+
+<script>
+    function leaderboardsChartGenerate() {
+        var active_year = document.querySelector('#year__selection').value;
+        var active_quarter = document.querySelector('.quarter__selection .selected__unit').value;
+        var industry_type = encodeURIComponent(document.querySelector('#industry__selection').value);
+
+        var fetch_url = `${base_url}/api/get-financials/?reporting_period__lt=&reporting_period__gt=&ticker__ticker__iexact=&ticker__type__type__iexact=${industry_type}&quarter__iexact=${active_quarter}&year=${active_year}`;
+        fetch(fetch_url)
+            .then(res=> {
+                return res.json();
+            })
+            .then(data => {
+                //sort based on net income
+                data.sort((a,b) => parseFloat(b.Total_Net_Income) - parseFloat(a.Total_Net_Income))
+                topTenTotalNetIncome = data.slice(0,10)
+                //sort based on net income
+                data.sort((a,b) => parseFloat(b.Total_Assets) - parseFloat(a.Total_Assets))
+                topTenTotalAssets = data.slice(0,10)
+
+                //delete previous chart generated
+                document.querySelectorAll("canvas").forEach(canvas => {
+                    let canvas_id = canvas.getAttribute("id")
+
+                    chartStatus = Chart.getChart(canvas_id)
+                    if (chartStatus != undefined) { // delete previous chart
+                        chartStatus.destroy()
+                    }
+                })
+                
+                // chart creation
+                new Chart(document.querySelector('#barChart_totalAssets'), {
+                type: 'bar',
+                data: {
+                    labels: topTenTotalAssets.map(item => item.ticker),
+                    datasets: [{
+                    label: 'Total Assets',
+                    data: topTenTotalAssets.map(item => item.Total_Assets),
+                    backgroundColor: [
+                        'rgba(65, 83, 241, 0.6)',
+                    ],
+                    borderColor: [
+                        'rgba(65, 83, 241, 0.6)',
+                    ],
+                    borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                afterTitle: (toolTipAfterTitle) => {
+                                    let index = toolTipAfterTitle[0].dataIndex
+                                    return topTenTotalAssets[index].ticker_name
+                                }
+                            }
+                        }
+                    }
+                }
+                });
+                // end of chart
+
+
+                // chart creation
+                new Chart(document.querySelector('#barChart_netIncome'), {
+                type: 'bar',
+                data: {
+                    labels: topTenTotalNetIncome.map(item => item.ticker),
+                    datasets: [{
+                    label: 'Total Net Income',
+                    data: topTenTotalNetIncome.map(item => item.Total_Net_Income),
+                    backgroundColor: [
+                        'rgba(65, 83, 241, 0.6)',
+                    ],
+                    borderColor: [
+                        'rgba(65, 83, 241, 0.6)',
+                    ],
+                    borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                afterTitle: (toolTipAfterTitle) => {
+                                    let index = toolTipAfterTitle[0].dataIndex
+                                    return topTenTotalNetIncome[index].ticker_name
+                                }
+                            }
+                        }
+                    }
+                }
+                });
+                // end of chart
+
+            })
+        }
+    
+    // industry selection
+    fetch(`${base_url}/api/get-industries/`)
+        .then(res => {
+            return res.json()
+        })
+        .then(data => {
+            let industrySelectionContainer = document.querySelector('#industry__selection')
+            industrySelectionContainer.innerHTML = ''
+
+            data.forEach(industry => {
+                industrySelectionContainer.innerHTML += `<option value="${industry.type}">${industry.type}</option>`
+            })
+        })
+
+    leaderboardsChartGenerate()
+    
+    /* ------------------------------------------------
+    # EVENT LISTENERS
+    -------------------------------------------------*/
+    // Quarter
+    document.querySelectorAll('.quarter__selection button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            document.querySelector('.quarter__selection .selected__unit').classList.remove('selected__unit')
+            button.classList.add('selected__unit')
+            leaderboardsChartGenerate()
+        })
+    })
+
+    // Year
+    document.querySelector('#year__selection').addEventListener('change', (e) => {
+        if (e.target.value !== '2022') {
+            document.querySelector('.quarter__selection .disabled').classList.remove('disabled')
+        } else {
+            document.querySelector('.quarter__selection #period_q4').classList.add('disabled')
+        }
+        leaderboardsChartGenerate()
+    })
+
+    document.querySelector('#industry__selection').addEventListener('change', (e) => {
+        document.querySelector('.industry__title').textContent = document.querySelector('#industry__selection').value
+        leaderboardsChartGenerate()
+    })
+</script>
+{% endblock %}
