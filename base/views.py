@@ -93,7 +93,7 @@ def companyPage(request,ticker):
     @register.filter
     def get_item(dictionary, key):
         return dictionary.get(key)
-
+    
     context = {
         'company': company,
         'classification': classification,

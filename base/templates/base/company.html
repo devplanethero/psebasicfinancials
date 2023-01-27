@@ -1,6 +1,7 @@
 {% extends 'index.html' %}
 {% load humanize %}
 {% load static %}
+{% load mathfilters %}
 
 {% block title %}
 {{company.name}} ({{company.ticker}}) - 
@@ -82,10 +83,10 @@
             <div class="col units__column">
                 <div class="d-flex justify-content-center align-items-center">
                     <small class="me-2 control__label">Units:</small>
-                    <div class="d-flex justify-content-between">
-                        <button class="btn w-50 btn-rounding selected__unit" id="roundToK">K</button>
-                        <button class="btn w-50 btn-rounding" id="roundToM">M</button>
-                        <button class="btn w-50 btn-rounding" id="roundToB">B</button>
+                    <div class="d-flex justify-content-between rounding__selection">
+                        <button class="btn w-50 btn-rounding selected__unit" id="roundToK" value="1">K</button>
+                        <button class="btn w-50 btn-rounding" id="roundToM" value="1000">M</button>
+                        <button class="btn w-50 btn-rounding" id="roundToB" value="1000000">B</button>
                     </div>
                </div>
             </div>
@@ -114,7 +115,7 @@
                     <th scope="row" class="text-nowrap ps-2"><span id="table_first_col">{{ clean_header }}</span></th>
                     
                     {% for val in data|get_item:key %}
-                    <td class="col-md-1 text-end px-2 table-values">{{val |floatformat:0| intcomma}}</td>
+                    <td class="col-md-1 text-end px-2 table-values">{{val |div:1000 |floatformat:0| intcomma}}</td>
                     {% endfor %}
         
                 </tr>
