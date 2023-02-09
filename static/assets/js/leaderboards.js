@@ -4,7 +4,7 @@ function leaderboardsChartGenerate() {
     var industry_type = encodeURIComponent(document.querySelector('#industry__selection').value);
 
     // show spinners
-    document.querySelectorAll('[role="status"]').forEach(spinner => {
+    document.querySelectorAll('.spinner__chartloader').forEach(spinner => {
         spinner.classList.remove('not-visible')
     })
 
@@ -31,7 +31,7 @@ function leaderboardsChartGenerate() {
                 }
             })
             
-            // show spinners
+            // hide spinners
             document.querySelectorAll('.spinner__chartloader').forEach(spinner => {
             spinner.classList.add('not-visible')
             })

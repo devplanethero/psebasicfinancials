@@ -1,0 +1,75 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}
+T-Bill - 
+{% endblock %}
+
+{% block content %}
+<div class="pagetitle mb-3">
+    <h1>T-Bill Rate</h1>
+    <p>(91-day)</p>
+</div>
+
+<section class="section leaderboards">
+    <!-- Controls -->
+    <div class="card">
+        <div class="card-body py-2 d-flex justify-content-center country_selection flex-wrap">
+            <!-- JS Here -->
+        </div>
+    </div>
+    <!-- Chart -->
+    <div class="card">
+        <div class="card-body line-chart-box">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-secondary spinner__chartloader" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+            </div>
+            <canvas id="lineChart" style="max-height: 350px;"></canvas>
+        </div>
+    </div>
+    <!-- Table -->
+    <div class="d-flex justify-content-center">
+        <div class="card chart_table overflow-hidden">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-secondary spinner__chartloader" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr class="table-secondary">
+                            <th scope="col" class="text-center text-nowrap table-header"></th>
+                            <!-- JS Here -->
+                        </tr>
+                    </thead>
+                    <tbody class="table-financials">
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    
+
+</section>
+
+
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    document.querySelector('#economy-side-nav').classList.remove('collapsed')
+
+    const economy_nav = document.querySelector('#economy-nav')
+
+    economy_nav.classList.add('show')
+    economy_nav.querySelector('.tbill-link').classList.add('active')
+</script>
+
+<script src="{% static 'assets/js/economy/economy.js'%}"></script>
+{% endblock %}

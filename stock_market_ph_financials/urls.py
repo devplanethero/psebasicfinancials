@@ -19,6 +19,7 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('base.urls')),
+    path('', include('economy.urls')),
 ]
 
 handler404="base.views.handle_not_found"

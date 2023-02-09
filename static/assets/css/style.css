@@ -1301,7 +1301,7 @@ h6 {
 /*--------------------------------------------
 # Table Financials
 --------------------------------------------*/
-.table-responsive{
+.table-responsive.company_financials{
   height:700px;  
   overflow:scroll;
 }

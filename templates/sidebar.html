@@ -29,6 +29,56 @@
         </a>
       </li><!-- End Dashboard Nav -->
 
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#economy-nav" data-bs-toggle="collapse" href="." id="economy-side-nav">
+          <i class="bi bi-bank"></i>
+          <span>Economy</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="economy-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'economy:gdp' %}" class="gdp-link" data-value="gdp">
+              <i class="bi bi-circle"></i><span>GDP</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'economy:inflation' %}" class="inflation-link" data-value="Inflation Rate">
+              <i class="bi bi-circle"></i><span>Inflation Rate</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'economy:unemployment' %}" class="unemployment-link" data-value="Unemployment Rate">
+              <i class="bi bi-circle"></i><span>Unemployment Rate</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'economy:tradebal' %}" class="tradebal-link" data-value="Trade Balance">
+              <i class="bi bi-circle"></i><span>Trade Balance</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'economy:netFDI' %}" class="netFDI-link" data-value="Net FDI">
+              <i class="bi bi-circle"></i><span>Net FDI</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'economy:timedeposit' %}" class="timedeposit-link" data-value="Time Deposit Rate">
+              <i class="bi bi-circle"></i><span>Time Deposit Rate</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'economy:lending' %}" class="lending-link" data-value="Lending Rate">
+              <i class="bi bi-circle"></i><span>Lending Rate</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'economy:tbill' %}" class="tbill-link" data-value="T-Bill Rate">
+              <i class="bi bi-circle"></i><span>T-Bill Rate</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Economy Nav -->
+
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">

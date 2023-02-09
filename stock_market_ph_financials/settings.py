@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'base.apps.BaseConfig',
+    'economy.apps.EconomyConfig',
 
     'django.contrib.humanize',
     'rest_framework',
