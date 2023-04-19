@@ -33,7 +33,7 @@ var lineChart = new Chart(document.querySelector('#lineChart'), {
             },
             title: {
                 display: true,
-                text: 'Growth Rate'
+                text: 'Rate'
             },
         },
         x: {

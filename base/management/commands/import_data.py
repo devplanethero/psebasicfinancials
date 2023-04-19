@@ -112,40 +112,44 @@ class Command(BaseCommand):
                     df_row = my_df.loc[i].tolist()
 
                     company_ticker = df_row[26]
-                    ticker, created = Company.objects.get_or_create(ticker=company_ticker)
+                    ticker, created = Company.objects.update_or_create(ticker=company_ticker)
+
+                    updated_values = {
+                        'Cash_and_Equivalents' : Decimal(df_row[0].item()),
+                        'Current_Assets' : Decimal(df_row[1].item()),
+                        'Fixed_Assets' : Decimal(df_row[2].item()),
+                        'LongTerm_Investments' : Decimal(df_row[3].item()),
+                        'Total_Assets' : Decimal(df_row[4].item()),
+                        'Current_Debt' : Decimal(df_row[5].item()),
+                        'Current_Liabilities' : Decimal(df_row[6].item()),
+                        'LongTerm_Debt' : Decimal(df_row[7].item()),
+                        'Total_Liabilities' : Decimal(df_row[8].item()),
+                        'Equity' : Decimal(df_row[9].item()),
+                        'Total_Equity' : Decimal(df_row[10].item()),
+                        'Outstanding_Shares' : Decimal(df_row[11].item()),
+                        'Revenue' : Decimal(df_row[12].item()),
+                        'Operating_Income' : Decimal(df_row[13].item()),
+                        'Income_on_Equity_Investments' : Decimal(df_row[14].item()),
+                        'Net_Income' : Decimal(df_row[15].item()),
+                        'Total_Net_Income' : Decimal(df_row[16].item()),
+                        'Depreciation_and_Amortization' : Decimal(df_row[17].item()),
+                        'Operating_Cash_Flow' : Decimal(df_row[18].item()),
+                        'Capital_Expenditures' : Decimal(df_row[19].item()),
+                        'Investing_Cash_Flow' : Decimal(df_row[20].item()),
+                        'Total_Debt_Issued' : Decimal(df_row[21].item()),
+                        'Total_Debt_Repaid' : Decimal(df_row[22].item()),
+                        'Stock_Buyback' : Decimal(df_row[23].item()),
+                        'Total_Dividends_Paid' : Decimal(df_row[24].item()),
+                        'Financing_Cash_Flow' : Decimal(df_row[25].item()),
+                    }
                     
-                    Financials.objects.create(
-                        Cash_and_Equivalents = Decimal(df_row[0].item()),
-                        Current_Assets = Decimal(df_row[1].item()),
-                        Fixed_Assets = Decimal(df_row[2].item()),
-                        LongTerm_Investments = Decimal(df_row[3].item()),
-                        Total_Assets = Decimal(df_row[4].item()),
-                        Current_Debt = Decimal(df_row[5].item()),
-                        Current_Liabilities = Decimal(df_row[6].item()),
-                        LongTerm_Debt = Decimal(df_row[7].item()),
-                        Total_Liabilities = Decimal(df_row[8].item()),
-                        Equity = Decimal(df_row[9].item()),
-                        Total_Equity = Decimal(df_row[10].item()),
-                        Outstanding_Shares = Decimal(df_row[11].item()),
-                        Revenue = Decimal(df_row[12].item()),
-                        Operating_Income = Decimal(df_row[13].item()),
-                        Income_on_Equity_Investments = Decimal(df_row[14].item()),
-                        Net_Income = Decimal(df_row[15].item()),
-                        Total_Net_Income = Decimal(df_row[16].item()),
-                        Depreciation_and_Amortization = Decimal(df_row[17].item()),
-                        Operating_Cash_Flow = Decimal(df_row[18].item()),
-                        Capital_Expenditures = Decimal(df_row[19].item()),
-                        Investing_Cash_Flow = Decimal(df_row[20].item()),
-                        Total_Debt_Issued = Decimal(df_row[21].item()),
-                        Total_Debt_Repaid = Decimal(df_row[22].item()),
-                        Stock_Buyback = Decimal(df_row[23].item()),
-                        Total_Dividends_Paid = Decimal(df_row[24].item()),
-                        Financing_Cash_Flow = Decimal(df_row[25].item()),
+                    Financials.objects.update_or_create(
                         ticker = ticker,
                         period = df_row[27],
                         year = df_row[28],
                         quarter = df_row[29],
-                        reporting_period = df_row[30]
+                        reporting_period = df_row[30],
+                        defaults=updated_values
                     )
             except ValueError:
                 pass # exclude e.g. FMETF

@@ -32,52 +32,55 @@ def generateDf():
     for i in range(0, len(clean_df)):
         # get year from above row if quarter column is quarter
         if clean_df['quarter'][i] in quarters:
-            clean_df['year'][i] = clean_df['year'][i-1]
+            if pd.isnull(clean_df['year'][i]): 
+                clean_df['year'][i] = clean_df['year'][i-1]
+            else:
+                clean_df['year'][i] = clean_df['year'][i]
             
-    #----------------GDP--------------------------
+   #----------------GDP--------------------------
     gdp_df = clean_df[4:17].drop(['description'], axis=1) # remove description column
     gdp_df = gdp_df[gdp_df.quarter.isin(quarters)] # only rows with quarter
     gdp_df = gdp_df.melt(id_vars=["year", "quarter"],var_name="Country", value_name="Value") # convert columns per country into rows
     gdp_df['economic_indicator'] = "GDP" # new column for economic_indicator type
     
     #----------------Inflation--------------------------
-    inflation_df = clean_df[30:43].drop(['description'], axis=1)
+    inflation_df = clean_df[30:44].drop(['description'], axis=1)
     inflation_df = inflation_df[inflation_df.quarter.isin(quarters)] # only rows with quarter
     inflation_df = inflation_df.melt(id_vars=["year", "quarter"],var_name="Country", value_name="Value") # convert columns per country into rows
     inflation_df['economic_indicator'] = "Inflation Rate" # new column for economic_indicator type
     
      #----------------Unemployment--------------------------
-    unemployment_df = clean_df[43:56].drop(['description'], axis=1)
+    unemployment_df = clean_df[44:58].drop(['description'], axis=1)
     unemployment_df = unemployment_df[unemployment_df.quarter.isin(quarters)] # only rows with quarter
     unemployment_df = unemployment_df.melt(id_vars=["year", "quarter"],var_name="Country", value_name="Value") # convert columns per country into rows
     unemployment_df['economic_indicator'] = "Unemployment Rate" # new column for economic_indicator type
     
      #----------------Trade Balance--------------------------
-    tradebal_df = clean_df[115:128].drop(['description'], axis=1)
+    tradebal_df = clean_df[121:135].drop(['description'], axis=1)
     tradebal_df = tradebal_df[tradebal_df.quarter.isin(quarters)] # only rows with quarter
     tradebal_df = tradebal_df.melt(id_vars=["year", "quarter"],var_name="Country", value_name="Value") # convert columns per country into rows
     tradebal_df['economic_indicator'] = "Trade Balance" # new column for economic_indicator type
     
      #----------------Net FDI--------------------------
-    netFDI_df = clean_df[170:182].drop(['description'], axis=1)
+    netFDI_df = clean_df[180:194].drop(['description'], axis=1)
     netFDI_df = netFDI_df[netFDI_df.quarter.isin(quarters)] # only rows with quarter
     netFDI_df = netFDI_df.melt(id_vars=["year", "quarter"],var_name="Country", value_name="Value") # convert columns per country into rows
     netFDI_df['economic_indicator'] = "Net FDI" # new column for economic_indicator type
     
      #----------------TD Rate--------------------------
-    timeDepositRate_df = clean_df[371:383].drop(['description'], axis=1)
+    timeDepositRate_df = clean_df[403:417].drop(['description'], axis=1)
     timeDepositRate_df = timeDepositRate_df[timeDepositRate_df.quarter.isin(quarters)] # only rows with quarter
     timeDepositRate_df = timeDepositRate_df.melt(id_vars=["year", "quarter"],var_name="Country", value_name="Value") # convert columns per country into rows
     timeDepositRate_df['economic_indicator'] = "Time Deposit Rate" # new column for economic_indicator type
     
      #----------------Lending Rate--------------------------
-    lendingRate_df = clean_df[383:395].drop(['description'], axis=1)
+    lendingRate_df = clean_df[417:431].drop(['description'], axis=1)
     lendingRate_df = lendingRate_df[lendingRate_df.quarter.isin(quarters)] # only rows with quarter
     lendingRate_df = lendingRate_df.melt(id_vars=["year", "quarter"],var_name="Country", value_name="Value") # convert columns per country into rows
     lendingRate_df['economic_indicator'] = "Lending Rate" # new column for economic_indicator type
 
      #----------------TBill Rate--------------------------
-    tBillRate_df = clean_df[395:408].drop(['description'], axis=1)
+    tBillRate_df = clean_df[431:445].drop(['description'], axis=1)
     tBillRate_df = tBillRate_df[tBillRate_df.quarter.isin(quarters)] # only rows with quarter
     tBillRate_df = tBillRate_df.melt(id_vars=["year", "quarter"],var_name="Country", value_name="Value") # convert columns per country into rows
     tBillRate_df['economic_indicator'] = "T-Bill Rate" # new column for economic_indicator type
@@ -111,11 +114,12 @@ class Command(BaseCommand):
             economic_indicator, created_economic_indicator = Indicator.objects.get_or_create(title=row_values[4])
             country, created_country = Country.objects.get_or_create(name=row_values[2])
 
-            EconomicIndicatorRecord.objects.create(
+            updated_values = {'value':row_values[3]}
+            EconomicIndicatorRecord.objects.update_or_create(
                 economic_indicator = economic_indicator,
                 country = country,
                 year = row_values[0],
                 quarter = row_values[1],
                 period = row_values[5],
-                value = row_values[3]
+                defaults= updated_values
             )
